@@ -8,13 +8,14 @@ import Search from './components/users/Search'
 import Alert from './components/layout/Alert'
 import About from './components/pages/About'
 
+import AlertState from './context/alert/alertState'
+
 import axios from 'axios'
 
 const App = () => {
   const [users, setUsers] = useState([])
   const [user, setUser] = useState({})
   const [loading, setLoading] = useState(false)
-  const [alert, setAlert] = useState(null)
   const [repos, setRepos] = useState([])
 
   const searchUsers = async text => {
@@ -52,42 +53,43 @@ const App = () => {
 
 
   return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        <div className="container">
-          <Alert alert={alert} />
-          <Switch>
-            <Route exact path="/" render={props => (
-              <Fragment>
-                <Search
-                  showClear={users.length > 0 ? true : false}
-                  searchUsers={searchUsers}
-                  clearUsers={clearUsers}
-                  setAlert={showAlert}
-                />
-                <Users
+    <AlertState>
+      <Router>
+        <div className="App">
+          <Navbar />
+          <div className="container">
+            <Alert />
+            <Switch>
+              <Route exact path="/" render={props => (
+                <Fragment>
+                  <Search
+                    showClear={users.length > 0 ? true : false}
+                    searchUsers={searchUsers}
+                    clearUsers={clearUsers}
+                  />
+                  <Users
+                    loading={loading}
+                    users={users}
+                  />
+                </Fragment>
+              )} />
+              <Route exact path="/about" component={About} />
+              <Route exact path="/user/:login" render={props => (
+                <User
+                  {...props}
+                  getUser={getUser}
+                  user={user}
                   loading={loading}
-                  users={users}
+                  getUserRepos={getUserRepos}
+                  repos={repos}
                 />
-              </Fragment>
-            )} />
-            <Route exact path="/about" component={About} />
-            <Route exact path="/user/:login" render={props => (
-              <User
-                {...props}
-                getUser={getUser}
-                user={user}
-                loading={loading}
-                getUserRepos={getUserRepos}
-                repos={repos}
-              />
-            )} />
-          </Switch>
-        </div>
+              )} />
+            </Switch>
+          </div>
 
-      </div>
-    </Router>
+        </div>
+      </Router>
+    </AlertState>
   )
 }
 
