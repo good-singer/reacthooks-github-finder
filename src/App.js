@@ -8,6 +8,7 @@ import Search from './components/users/Search'
 import Alert from './components/layout/Alert'
 import About from './components/pages/About'
 
+import GithubState from './context/github/GithubState'
 import AlertState from './context/alert/alertState'
 
 import axios from 'axios'
@@ -53,43 +54,45 @@ const App = () => {
 
 
   return (
-    <AlertState>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <div className="container">
-            <Alert />
-            <Switch>
-              <Route exact path="/" render={props => (
-                <Fragment>
-                  <Search
-                    showClear={users.length > 0 ? true : false}
-                    searchUsers={searchUsers}
-                    clearUsers={clearUsers}
-                  />
-                  <Users
+    <GithubState>
+      <AlertState>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <div className="container">
+              <Alert />
+              <Switch>
+                <Route exact path="/" render={props => (
+                  <Fragment>
+                    <Search
+                      showClear={users.length > 0 ? true : false}
+                      searchUsers={searchUsers}
+                      clearUsers={clearUsers}
+                    />
+                    <Users
+                      loading={loading}
+                      users={users}
+                    />
+                  </Fragment>
+                )} />
+                <Route exact path="/about" component={About} />
+                <Route exact path="/user/:login" render={props => (
+                  <User
+                    {...props}
+                    getUser={getUser}
+                    user={user}
                     loading={loading}
-                    users={users}
+                    getUserRepos={getUserRepos}
+                    repos={repos}
                   />
-                </Fragment>
-              )} />
-              <Route exact path="/about" component={About} />
-              <Route exact path="/user/:login" render={props => (
-                <User
-                  {...props}
-                  getUser={getUser}
-                  user={user}
-                  loading={loading}
-                  getUserRepos={getUserRepos}
-                  repos={repos}
-                />
-              )} />
-            </Switch>
-          </div>
+                )} />
+              </Switch>
+            </div>
 
-        </div>
-      </Router>
-    </AlertState>
+          </div>
+        </Router>
+      </AlertState>
+    </GithubState>
   )
 }
 
